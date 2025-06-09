@@ -5,6 +5,7 @@
 package com.poly.javaswing;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -58,6 +59,8 @@ public class AddProductFrame extends javax.swing.JFrame {
         radioActive = new javax.swing.JRadioButton();
         radioInactive = new javax.swing.JRadioButton();
         btnAddProduct = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tableProductList = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -91,6 +94,16 @@ public class AddProductFrame extends javax.swing.JFrame {
             }
         });
 
+        tableProductList.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Tên sản phẩm", "Mô tả", "Giá nhập", "Số lượng", "Giá bán", "Danh mục", "Trạng thái sản phẩm"
+            }
+        ));
+        jScrollPane1.setViewportView(tableProductList);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -104,6 +117,7 @@ public class AddProductFrame extends javax.swing.JFrame {
                     .addComponent(tfQuantity)
                     .addComponent(tfUnitPrice)
                     .addComponent(cbCategory, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAddProduct, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -115,8 +129,8 @@ public class AddProductFrame extends javax.swing.JFrame {
                             .addComponent(jLabel7)
                             .addComponent(radioActive)
                             .addComponent(radioInactive))
-                        .addGap(0, 569, Short.MAX_VALUE))
-                    .addComponent(btnAddProduct, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 729, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -154,7 +168,9 @@ public class AddProductFrame extends javax.swing.JFrame {
                 .addComponent(radioInactive)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAddProduct)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -206,7 +222,20 @@ public class AddProductFrame extends javax.swing.JFrame {
 //      "" || "             "
 //      name.isEmpty() => "" => true, "         " => false
         if(name.isBlank()){ // "" => true,  "       " => true
-            System.out.println("Tên sản phẩm không được bỏ trống");
+            JOptionPane.showMessageDialog(this, "Tên sản phẩm không được bỏ trống");
+            return;
+            
+//            for(int index = 0; index < 20; index++){
+////                if(index == 2){
+////                    break;
+////                }
+//
+////                Chỉ lập ở TH index chia hết cho 2
+//                
+//                if(index % 2 != 0){
+//                    
+//                }
+//            }
         }
         
 //      trim() => Loại bỏ khoảng trắng dư trong chuỗi
@@ -218,7 +247,8 @@ public class AddProductFrame extends javax.swing.JFrame {
 
 //      Kiểm tra số lượng từ
         if(desc.trim().split(" ").length < 5){
-            
+            JOptionPane.showMessageDialog(this, "Mô tả sản phẩm phải có ít nhất 5 từ");
+            return;
         }
         
 //      Nếu TH mô tả có ít nhất 20 ký tự
@@ -239,7 +269,53 @@ public class AddProductFrame extends javax.swing.JFrame {
 
 //      Trong quá trình chuyển dữ liệu nếu mà price => chữ => xảy ra lỗi
 //      try catch để bắt lỗi => Dữ liệu nhập không phải số
+        int priceInt = 0;
+        try{
+            priceInt = Integer.parseInt(price);
+    //      Kiểm tra giá không được nhỏ hơn 10.000
+            if(priceInt < 10000){
+//                System.out.println("Giá không được nhỏ hơn 10.000");
+                JOptionPane.showMessageDialog(this, "Giá không được nhỏ hơn 10.000");
+                return;
+            }
+        }catch(Exception e){
+//            System.out.println("Giá phải là số");
+            JOptionPane.showMessageDialog(this, "Giá phải là số");
+            return;
+        }
         
+        try {
+            int quantityInt = Integer.parseInt(quantity);
+            if(quantityInt <= 0){
+//                System.out.println("Số lượng phải lớn hơn 0");
+                JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0");
+                return;
+            }
+        }catch(Exception e){
+//            System.out.println("Số lượng phải là số");
+            JOptionPane.showMessageDialog(this, "Số lượng phải là số");
+            return;
+        }
+        
+        try{
+            int unitPriceInt = Integer.parseInt(unitPrice);
+            if(unitPriceInt < 10000){
+//                System.out.println("Giá bán không được nhỏ hơn 10.000");
+                JOptionPane.showMessageDialog(this, "Giá bán không được nhỏ hơn 10.000");
+                return;
+            }else if(unitPriceInt < priceInt){
+//                System.out.println("Giá bán phải lớn hơn giá nhập");
+                JOptionPane.showMessageDialog(this, "Giá bán phải lớn hơn giá nhập");
+                return;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+//            System.out.println("Giá bán phải là số");
+            JOptionPane.showMessageDialog(this, "Giá bán phải là số");
+            return;
+        }
+        
+//      Thêm hoặc sửa dữ liệu trong DB 
 
     }//GEN-LAST:event_btnAddProductMouseClicked
 
@@ -289,8 +365,10 @@ public class AddProductFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JRadioButton radioActive;
     private javax.swing.JRadioButton radioInactive;
+    private javax.swing.JTable tableProductList;
     private javax.swing.JTextField tfDesc;
     private javax.swing.JTextField tfName;
     private javax.swing.JTextField tfPrice;

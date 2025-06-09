@@ -4,6 +4,10 @@
  */
 package com.poly.javaswing;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+
 /**
  *
  * @author macbookprom1
@@ -15,7 +19,7 @@ public class Main {
 //        MainFrame mainFrame = new MainFrame();
 //        mainFrame.setVisible(true);
 
-        AddProductFrame addProductFrame = new AddProductFrame();
+        AddProduct2JFrame addProductFrame = new AddProduct2JFrame();
         addProductFrame.setVisible(true);
     }
 }
