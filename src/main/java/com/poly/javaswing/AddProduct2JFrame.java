@@ -4,6 +4,9 @@
  */
 package com.poly.javaswing;
 
+import java.util.ArrayList;
+import javax.swing.DefaultComboBoxModel;
+
 /**
  *
  * @author macbookprom1
@@ -13,8 +16,32 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
     /**
      * Creates new form AddProduct2JFrame
      */
+    
+    private ArrayList<Category> categories;
+    
     public AddProduct2JFrame() {
         initComponents();
+        this.initComboBox();
+    }
+    
+//  Load dữ liệu từ db lên comboBox 
+    public void initComboBox(){
+//      Danh sách danh mục từ DB 
+        categories = CategoryDAO.findAll();
+//      Dữ liệu mà comboBox cần để hiển thị thông tin?
+//      Mảng kiểu String 
+//      Convert ArrayList categories => String[] categoryName
+
+//      Khởi tạo 1 mảng có kích thước bằng với độ lớn của Array List
+//      Duyệt qua Array List bằng for
+//      Set tên của danh mục vào từng item của mảng theo index
+
+        String[] categoryName = new String[categories.size()];
+        for(int index = 0; index < categories.size(); index++){
+            categoryName[index] = categories.get(index).getName();
+        }
+        
+        this.cbCategory.setModel(new DefaultComboBoxModel(categoryName));
     }
 
     /**
@@ -35,7 +62,7 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jTextField4 = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cbCategory = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -59,7 +86,7 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
 
         jLabel5.setText("Danh mục");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbCategory.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jButton1.setText("Thêm sản phẩm");
 
@@ -99,7 +126,7 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
                     .addComponent(jTextField2)
                     .addComponent(jTextField3)
                     .addComponent(jTextField4)
-                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbCategory, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -148,7 +175,7 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cbCategory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
@@ -205,6 +232,7 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> cbCategory;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -213,7 +241,6 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
