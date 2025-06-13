@@ -6,6 +6,8 @@ package com.poly.javaswing;
 
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -18,10 +20,38 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
      */
     
     private ArrayList<Category> categories;
+    private ArrayList<Product> products;
     
     public AddProduct2JFrame() {
         initComponents();
         this.initComboBox();
+        this.getData();
+    }
+    
+    public void getData(){
+//      Lấy danh sách sản phẩm từ db
+        products = ProductDAO.findAll();
+        
+//      for Each => Duyệt qua tất cả phần từ của mảng
+//      mà không quan tâm đến index 
+        
+//      Xoá bỏ tất cả các dòng đang có trong table 
+        DefaultTableModel model = (DefaultTableModel) this.tbProduct.getModel();
+        model.setRowCount(0);
+        
+        for(Product product : products){
+//          Thêm thông tin của sản phẩm vào từng dòng của model 
+            model.addRow(new Object[] {
+                product.getId(),
+                product.getName(),
+                product.getPrice(),
+                product.getQuantity(),
+                product.getDiscount(),
+                product.getCategory().getName()
+            });
+        }
+//      Gán danh sách sản phẩm vào model 
+        this.tbProduct.setModel(model);
     }
     
 //  Load dữ liệu từ db lên comboBox 
@@ -54,25 +84,25 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        tfName = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        tfPrice = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        tfQuantity = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        tfDiscountPrice = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         cbCategory = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        btnAdd = new javax.swing.JButton();
+        btnUpdate = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
+        btnClear = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
+        tbProduct = new javax.swing.JTable();
+        btnFirst = new javax.swing.JButton();
+        btnPrev = new javax.swing.JButton();
+        btnNext = new javax.swing.JButton();
+        btnLast = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -88,15 +118,20 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
 
         cbCategory.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jButton1.setText("Thêm sản phẩm");
+        btnAdd.setText("Thêm sản phẩm");
+        btnAdd.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnAddMouseClicked(evt);
+            }
+        });
 
-        jButton2.setText("Sửa sản phẩm");
+        btnUpdate.setText("Sửa sản phẩm");
 
-        jButton3.setText("Xoá sản phẩm");
+        btnDelete.setText("Xoá sản phẩm");
 
-        jButton4.setText("Làm mới form");
+        btnClear.setText("Làm mới form");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tbProduct.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -104,15 +139,20 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
                 "ID", "Tên sản phẩm", "Giá bán", "Số lượng", "Giá giảm", "Danh mục"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        tbProduct.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbProductMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tbProduct);
 
-        jButton5.setText("Dòng đầu tiên");
+        btnFirst.setText("Dòng đầu tiên");
 
-        jButton6.setText("Dòng trước");
+        btnPrev.setText("Dòng trước");
 
-        jButton7.setText("Dòng sau");
+        btnNext.setText("Dòng sau");
 
-        jButton8.setText("Dòng cuối cùng");
+        btnLast.setText("Dòng cuối cùng");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -122,10 +162,10 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTextField1)
-                    .addComponent(jTextField2)
-                    .addComponent(jTextField3)
-                    .addComponent(jTextField4)
+                    .addComponent(tfName)
+                    .addComponent(tfPrice)
+                    .addComponent(tfQuantity)
+                    .addComponent(tfDiscountPrice)
                     .addComponent(cbCategory, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -135,21 +175,21 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
                             .addComponent(jLabel4)
                             .addComponent(jLabel5)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton1)
+                                .addComponent(btnAdd)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton2)
+                                .addComponent(btnUpdate)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton3)
+                                .addComponent(btnDelete)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton4))
+                                .addComponent(btnClear))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton5)
+                                .addComponent(btnFirst)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton6)
+                                .addComponent(btnPrev)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton7)
+                                .addComponent(btnNext)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton8)))
+                                .addComponent(btnLast)))
                         .addGap(0, 187, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -159,42 +199,108 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tfName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tfPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tfQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tfDiscountPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cbCategory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4))
+                    .addComponent(btnAdd)
+                    .addComponent(btnUpdate)
+                    .addComponent(btnDelete)
+                    .addComponent(btnClear))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5)
-                    .addComponent(jButton6)
-                    .addComponent(jButton7)
-                    .addComponent(jButton8))
+                    .addComponent(btnFirst)
+                    .addComponent(btnPrev)
+                    .addComponent(btnNext)
+                    .addComponent(btnLast))
                 .addContainerGap(19, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddMouseClicked
+        // TODO add your handling code here:
+//      Thực hiện chức năng thêm sản phẩm
+//      Lấy tất cả thông tin từ input và người dùng đã nhập khai báo vào 1 biến
+        
+        String name = this.tfName.getText();
+        String price = this.tfPrice.getText();
+        String quantity = this.tfQuantity.getText();
+        String discountPrice = this.tfDiscountPrice.getText();
+        
+//      Lấy đối tượng của danh mục mà người dùng đã chọn 
+
+//      Lấy vị trí mà user đã chọn trong cb 
+        int indexCatComboBox = this.cbCategory.getSelectedIndex();
+        Category category = this.categories.get(indexCatComboBox);
+        
+//      Bước kiểm tra dữ liệu 
+//      TODO
+
+//      insert
+        Product product = new Product();
+        product.setName(name);
+        product.setPrice(Integer.parseInt(price));
+        product.setQuantity(Integer.parseInt(quantity));
+        product.setDiscount(Integer.parseInt(discountPrice));
+        product.setCategory(category);
+        
+        boolean insert = ProductDAO.insert(product);
+        if(insert){
+            JOptionPane.showMessageDialog(this, "Thành công");
+//          Reload lại table 
+            this.getData();
+        }else{
+            JOptionPane.showMessageDialog(this, "Thất bại");
+        }
+    }//GEN-LAST:event_btnAddMouseClicked
+
+    private void tbProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbProductMouseClicked
+        // TODO add your handling code here:
+        
+//      Nhận sự kiện khi user click vào bất kỳ thông tin gì trong table 
+//      Trả về dòng mà người dùng đã click vào
+//      => index tương ứng với index bên trong mảng product từ db lấy về được 
+        int indexTable = this.tbProduct.getSelectedRow();
+        
+//      Đối tượng sản phẩm mà user click vào 
+        Product product = this.products.get(indexTable);
+        this.tfName.setText(product.getName());
+        this.tfPrice.setText(String.valueOf(product.getPrice()));
+        this.tfQuantity.setText(String.valueOf(product.getQuantity()));
+        this.tfDiscountPrice.setText(String.valueOf(product.getDiscount()));
+        
+//      Tìm vị trí index của danh mục trong mảng db từ thông tin của product 
+        int indexCat = 0;
+        
+        for(int index = 0; index < this.categories.size(); index++){
+            if(categories.get(index).getId() == product.getCategory().getId()){
+                indexCat = index;
+                break;
+            }
+        }
+        
+//      Hiển thị nội dung được chọn ở comboBox 
+        this.cbCategory.setSelectedIndex(indexCat);
+    }//GEN-LAST:event_tbProductMouseClicked
 
     /**
      * @param args the command line arguments
@@ -232,25 +338,25 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnClear;
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnFirst;
+    private javax.swing.JButton btnLast;
+    private javax.swing.JButton btnNext;
+    private javax.swing.JButton btnPrev;
+    private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> cbCategory;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
+    private javax.swing.JTable tbProduct;
+    private javax.swing.JTextField tfDiscountPrice;
+    private javax.swing.JTextField tfName;
+    private javax.swing.JTextField tfPrice;
+    private javax.swing.JTextField tfQuantity;
     // End of variables declaration//GEN-END:variables
 }

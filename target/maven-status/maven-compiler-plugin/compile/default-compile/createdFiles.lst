@@ -1,9 +1,11 @@
 com/poly/javaswing/MainFrame$5.class
+com/poly/javaswing/ProductDAO.class
 com/poly/javaswing/MainFrame.class
 com/poly/javaswing/AddProduct2JFrame$1.class
 com/poly/javaswing/AddProductFrame$2.class
 com/poly/javaswing/AddProductFrame$1.class
 com/poly/javaswing/MainFrame$1.class
+com/poly/javaswing/AddProduct2JFrame$2.class
 com/poly/javaswing/CategoryDAO.class
 com/poly/javaswing/Product.class
 com/poly/javaswing/AddProduct2JFrame.class
@@ -11,6 +13,7 @@ com/poly/javaswing/Category.class
 com/poly/javaswing/AddProductFrame.class
 com/poly/javaswing/DBConnect.class
 com/poly/javaswing/MainFrame$2.class
+com/poly/javaswing/AddProduct2JFrame$3.class
 com/poly/javaswing/MainFrame$4.class
 com/poly/javaswing/MainFrame$3.class
 com/poly/javaswing/Main.class

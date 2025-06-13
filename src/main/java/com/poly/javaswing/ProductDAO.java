@@ -35,7 +35,7 @@ public class ProductDAO {
                 
                 Category category = new Category();
                 category.setId(resultSet.getInt("cat_id"));
-                category.setId(resultSet.getInt("cat_name"));
+                category.setName(resultSet.getString("cat_name"));
                 
                 product.setCategory(category);
                 products.add(product);
@@ -43,7 +43,7 @@ public class ProductDAO {
             
             conn.close();
         }catch(Exception e){
-            
+            e.printStackTrace();
         }
         return products;
     }
@@ -88,5 +88,78 @@ public class ProductDAO {
 //      Nếu không tim được và code chạy đến đây thì trả về null
 //      => Không có sản phẩm nào được tìm thấy thông tin tin 
         return null;
+    }
+    
+//  Xây dựng 1 hàm insert (Thêm sản phẩm vào db)
+    public static boolean insert(Product product){
+        try{
+            Connection conn = DBConnect.getConnection();
+            
+//          Lệnh insert 
+            String sql = "INSERT INTO products(name, price, quantity, discount_price, cat_id) "
+                    + "VALUES(?, ?, ?, ?, ?)";
+            
+            PreparedStatement preStatement = conn.prepareStatement(sql);
+            preStatement.setString(1, product.getName());
+            preStatement.setInt(2, product.getPrice());
+            preStatement.setInt(3, product.getQuantity());
+            preStatement.setInt(4, product.getDiscount());
+            preStatement.setInt(5, product.getCategory().getId());
+            
+            preStatement.execute();
+            conn.close();
+            
+//          Thêm thành công 
+            return true;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+//      Có lỗi xảy ra 
+        return false;
+    }
+    
+    public static boolean update(Product product){
+        try{
+            Connection conn = DBConnect.getConnection();
+//          Lệnh insert 
+            String sql = "UPDATE FROM products SET name=?, price=?, quantity=?, discount_price=?, cat_id=? WHERE id=?";
+            
+            PreparedStatement preStatement = conn.prepareStatement(sql);
+            preStatement.setString(1, product.getName());
+            preStatement.setInt(2, product.getPrice());
+            preStatement.setInt(3, product.getQuantity());
+            preStatement.setInt(4, product.getDiscount());
+            preStatement.setInt(5, product.getCategory().getId());
+            preStatement.setInt(6, product.getId());
+            
+            preStatement.execute();
+            conn.close();
+            
+//          Thêm thành công 
+            return true;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+//      Có lỗi xảy ra 
+        return false;
+    }
+    
+    public static boolean delete(int id){
+        try{
+            Connection conn = DBConnect.getConnection();
+//          Lệnh insert 
+            String sql = "DELETE FROM products WHERE id=?";
+            PreparedStatement preStatement = conn.prepareStatement(sql);
+            preStatement.setInt(1, id);
+            preStatement.execute();
+            conn.close();
+            
+//          Thêm thành công 
+            return true;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+//      Có lỗi xảy ra 
+        return false;
     }
 }
