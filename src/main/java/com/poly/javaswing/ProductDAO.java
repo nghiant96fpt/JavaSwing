@@ -122,7 +122,7 @@ public class ProductDAO {
         try{
             Connection conn = DBConnect.getConnection();
 //          Lệnh insert 
-            String sql = "UPDATE FROM products SET name=?, price=?, quantity=?, discount_price=?, cat_id=? WHERE id=?";
+            String sql = "UPDATE products SET name=?, price=?, quantity=?, discount_price=?, cat_id=? WHERE id=?";
             
             PreparedStatement preStatement = conn.prepareStatement(sql);
             preStatement.setString(1, product.getName());

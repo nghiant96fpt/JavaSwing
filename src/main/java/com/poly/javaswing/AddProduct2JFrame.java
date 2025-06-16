@@ -20,7 +20,13 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
      */
     
     private ArrayList<Category> categories;
+    
+//  1 danh sách đối tượng trong db 
     private ArrayList<Product> products;
+//  Id trong db bắt đầu từ 1
+    private int id = 0;
+//  Index table bắt đầu từ 0
+    private int indexTable = -1;
     
     public AddProduct2JFrame() {
         initComponents();
@@ -126,10 +132,25 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
         });
 
         btnUpdate.setText("Sửa sản phẩm");
+        btnUpdate.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnUpdateMouseClicked(evt);
+            }
+        });
 
         btnDelete.setText("Xoá sản phẩm");
+        btnDelete.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnDeleteMouseClicked(evt);
+            }
+        });
 
         btnClear.setText("Làm mới form");
+        btnClear.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnClearMouseClicked(evt);
+            }
+        });
 
         tbProduct.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -147,12 +168,32 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tbProduct);
 
         btnFirst.setText("Dòng đầu tiên");
+        btnFirst.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnFirstMouseClicked(evt);
+            }
+        });
 
         btnPrev.setText("Dòng trước");
+        btnPrev.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnPrevMouseClicked(evt);
+            }
+        });
 
         btnNext.setText("Dòng sau");
+        btnNext.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnNextMouseClicked(evt);
+            }
+        });
 
         btnLast.setText("Dòng cuối cùng");
+        btnLast.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnLastMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -238,69 +279,113 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
 
     private void btnAddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddMouseClicked
         // TODO add your handling code here:
-//      Thực hiện chức năng thêm sản phẩm
-//      Lấy tất cả thông tin từ input và người dùng đã nhập khai báo vào 1 biến
-        
-        String name = this.tfName.getText();
-        String price = this.tfPrice.getText();
-        String quantity = this.tfQuantity.getText();
-        String discountPrice = this.tfDiscountPrice.getText();
-        
-//      Lấy đối tượng của danh mục mà người dùng đã chọn 
-
-//      Lấy vị trí mà user đã chọn trong cb 
-        int indexCatComboBox = this.cbCategory.getSelectedIndex();
-        Category category = this.categories.get(indexCatComboBox);
-        
-//      Bước kiểm tra dữ liệu 
-//      TODO
-
-//      insert
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(Integer.parseInt(price));
-        product.setQuantity(Integer.parseInt(quantity));
-        product.setDiscount(Integer.parseInt(discountPrice));
-        product.setCategory(category);
-        
-        boolean insert = ProductDAO.insert(product);
-        if(insert){
-            JOptionPane.showMessageDialog(this, "Thành công");
-//          Reload lại table 
-            this.getData();
-        }else{
-            JOptionPane.showMessageDialog(this, "Thất bại");
+        Product product = this.getForm();
+        if(product != null){
+            boolean insert = ProductDAO.insert(product);
+            if(insert){
+                JOptionPane.showMessageDialog(this, "Thành công");
+                this.getData();
+                this.clearForm();
+            }else{
+                JOptionPane.showMessageDialog(this, "Thất bại");
+            }
         }
     }//GEN-LAST:event_btnAddMouseClicked
 
     private void tbProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbProductMouseClicked
         // TODO add your handling code here:
+       this.getTableSelectedInfo();
+    }//GEN-LAST:event_tbProductMouseClicked
+
+    private void btnUpdateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnUpdateMouseClicked
+        // TODO add your handling code here:
         
-//      Nhận sự kiện khi user click vào bất kỳ thông tin gì trong table 
-//      Trả về dòng mà người dùng đã click vào
-//      => index tương ứng với index bên trong mảng product từ db lấy về được 
-        int indexTable = this.tbProduct.getSelectedRow();
-        
-//      Đối tượng sản phẩm mà user click vào 
-        Product product = this.products.get(indexTable);
-        this.tfName.setText(product.getName());
-        this.tfPrice.setText(String.valueOf(product.getPrice()));
-        this.tfQuantity.setText(String.valueOf(product.getQuantity()));
-        this.tfDiscountPrice.setText(String.valueOf(product.getDiscount()));
-        
-//      Tìm vị trí index của danh mục trong mảng db từ thông tin của product 
-        int indexCat = 0;
-        
-        for(int index = 0; index < this.categories.size(); index++){
-            if(categories.get(index).getId() == product.getCategory().getId()){
-                indexCat = index;
-                break;
+        if(id == 0){
+            JOptionPane.showMessageDialog(this, "Chưa chọn sản phẩm để sửa");
+            return;
+        }
+//      Thực hiện bắt lỗi và gán dữ liệu vào đối tượng product 
+        Product product = this.getForm();
+//      Nếu product == null => Có lỗi xảy ra bên trong form 
+        if(product != null){
+            boolean update = ProductDAO.update(product);
+            if(update){
+                JOptionPane.showMessageDialog(this, "Thành công");
+                this.getData();
+                this.clearForm();
+            }else{
+                JOptionPane.showMessageDialog(this, "Thất bại");
             }
         }
+    }//GEN-LAST:event_btnUpdateMouseClicked
+
+    private void btnDeleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDeleteMouseClicked
+        // TODO add your handling code here:
         
-//      Hiển thị nội dung được chọn ở comboBox 
-        this.cbCategory.setSelectedIndex(indexCat);
-    }//GEN-LAST:event_tbProductMouseClicked
+        if(id == 0){
+            JOptionPane.showMessageDialog(this, "Chưa chọn sản phẩm để xoá");
+            return;
+        }
+        
+        int confirm = JOptionPane.showConfirmDialog(this, "Bạn có muốn xoá sản phẩm đã chọn không?", null, JOptionPane.YES_NO_OPTION);
+        
+        if(confirm == 0){
+            boolean delete = ProductDAO.delete(id);
+            if(delete){
+                JOptionPane.showMessageDialog(this, "Thành công");
+    //          Reload lại table 
+                this.getData();
+                id = 0;
+            }else{
+                JOptionPane.showMessageDialog(this, "Thất bại");
+            }   
+        }
+    }//GEN-LAST:event_btnDeleteMouseClicked
+
+    private void btnClearMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnClearMouseClicked
+        // TODO add your handling code here:
+        this.clearForm();
+    }//GEN-LAST:event_btnClearMouseClicked
+
+    private void btnFirstMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnFirstMouseClicked
+        // TODO add your handling code here:
+//      Chọn dòng theo vị trí bắt đầu và kết thúc 
+        indexTable = 0;
+        this.tbProduct.setRowSelectionInterval(indexTable, indexTable);
+        this.getTableSelectedInfo();
+    }//GEN-LAST:event_btnFirstMouseClicked
+
+    private void btnPrevMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPrevMouseClicked
+        // TODO add your handling code here:
+        if(indexTable <= 0){
+            indexTable = products.size() - 1;
+        }else{
+            indexTable -= 1;
+        }
+        
+        this.tbProduct.setRowSelectionInterval(indexTable, indexTable);
+        this.getTableSelectedInfo();
+    }//GEN-LAST:event_btnPrevMouseClicked
+
+    private void btnNextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnNextMouseClicked
+        // TODO add your handling code here:
+        if(indexTable == products.size() - 1){
+            indexTable = 0;
+        }else{
+            indexTable += 1;
+        }
+        
+        this.tbProduct.setRowSelectionInterval(indexTable, indexTable);
+        this.getTableSelectedInfo();
+    }//GEN-LAST:event_btnNextMouseClicked
+
+    private void btnLastMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLastMouseClicked
+        // TODO add your handling code here:
+        
+        indexTable = products.size() - 1;
+        this.tbProduct.setRowSelectionInterval(indexTable, indexTable);
+        this.getTableSelectedInfo();
+    }//GEN-LAST:event_btnLastMouseClicked
 
     /**
      * @param args the command line arguments
@@ -359,4 +444,108 @@ public class AddProduct2JFrame extends javax.swing.JFrame {
     private javax.swing.JTextField tfPrice;
     private javax.swing.JTextField tfQuantity;
     // End of variables declaration//GEN-END:variables
+
+    
+//  Gọi lại trong nút làm mới form 
+//  Gọi lại sau khi thêm, sửa hoặc xoá thành công 
+    private void clearForm(){
+        id = 0;
+        indexTable = -1;
+        this.tfName.setText("");
+        this.tfPrice.setText("");
+        this.tfQuantity.setText("");
+        this.tfDiscountPrice.setText("");
+        this.cbCategory.setSelectedIndex(0);
+    }
+    
+//  Dùng để kiểm tra và lấy dữ liệu từ các ô input trong form gán vào đối tượng 
+    private Product getForm(){
+        String name = this.tfName.getText();
+        String price = this.tfPrice.getText();
+        String quantity = this.tfQuantity.getText();
+        String discountPrice = this.tfDiscountPrice.getText();
+        int indexCatComboBox = this.cbCategory.getSelectedIndex();
+        Category category = this.categories.get(indexCatComboBox);
+        
+//      Tên không bỏ trống 
+        if(name.isBlank()){
+            JOptionPane.showMessageDialog(this, "Tên không bỏ trống");
+            return null;
+        }
+        
+        try{
+//          Lỗi sẽ chạy vào catch 
+            int priceInt = Integer.parseInt(price);
+            if(priceInt < 10000){
+                JOptionPane.showMessageDialog(this, "Giá tối thiểu là 10.000");
+                return null;
+            }
+        }catch(Exception e){
+//          Lỗi này xuất hiện khi user nhập vào ký tự bất kỳ không phải định dạng số
+            JOptionPane.showMessageDialog(this, "Giá nhập vào phải là số");
+            return null;
+        }
+        
+        try{
+//          Lỗi sẽ chạy vào catch 
+            int quantityInt = Integer.parseInt(quantity);
+            if(quantityInt < 1){
+                JOptionPane.showMessageDialog(this, "Số lượng tôi thiểu là 1");
+                return null;
+            }
+        }catch(Exception e){
+//          Lỗi này xuất hiện khi user nhập vào ký tự bất kỳ không phải định dạng số
+            JOptionPane.showMessageDialog(this, "Số lượng nhập vào phải là số");
+            return null;
+        }
+        
+        try{
+//          Lỗi sẽ chạy vào catch 
+            int discountPriceInt = Integer.parseInt(discountPrice);
+            if(discountPriceInt < 10000){
+                JOptionPane.showMessageDialog(this, "Giá giảm tôi thiểu là 1");
+                return null;
+            }
+        }catch(Exception e){
+//          Lỗi này xuất hiện khi user nhập vào ký tự bất kỳ không phải định dạng số
+            JOptionPane.showMessageDialog(this, "Giá giảm nhập vào phải là số");
+            return null;
+        }
+        
+//      Không có bất kỳ lỗi nào xảy ra 
+    
+        Product product = new Product();
+        product.setId(id);
+        product.setName(name);
+//      Do ở trên có kiểm tra try catch rồi
+//      Nếu lỗi ở trên thì đã return null lệnh này sẽ không được thực thi (dừng phương thức)
+//      Ngược lại chắc chắn parse thành công nên không cần try catch 
+        product.setPrice(Integer.parseInt(price));
+        product.setQuantity(Integer.parseInt(quantity));
+        product.setDiscount(Integer.parseInt(discountPrice));
+        product.setCategory(category);
+        return product;
+    }
+
+//  Gán thông tin khi user chọn vào 1 dòng của table vào input
+    private void getTableSelectedInfo(){
+        indexTable = this.tbProduct.getSelectedRow();
+        
+        Product product = this.products.get(indexTable);
+        this.tfName.setText(product.getName());
+        this.tfPrice.setText(String.valueOf(product.getPrice()));
+        this.tfQuantity.setText(String.valueOf(product.getQuantity()));
+        this.tfDiscountPrice.setText(String.valueOf(product.getDiscount()));
+        
+        int indexCat = 0;
+        
+        for(int index = 0; index < this.categories.size(); index++){
+            if(categories.get(index).getId() == product.getCategory().getId()){
+                indexCat = index;
+                break;
+            }
+        }
+        this.cbCategory.setSelectedIndex(indexCat);
+        id = product.getId();
+    }
 }
